@@ -5,7 +5,7 @@ import time
 engine = pyttsx3.init()
 # Set speech rate (slower)
 rate = engine.getProperty('rate')
-engine.setProperty('rate', rate - 50)  # Decrease rate to make it slower
+engine.setProperty('rate', rate - 40)  # Decrease rate to make it slower
 
 # Set volume (optional, default is 1.0)
 engine.setProperty('volume', 1)  # Adjust volume between 0.0 and 1.0 (1.0 is max)
@@ -34,9 +34,6 @@ def speak():
 
 key = '!@#$%^&*()_+!!!44444444!!!!!-=[]|;:,.<>?/~'
 speak()
-
-
-
 
 
 # Open and read the text file
