@@ -1,68 +1,56 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask import Flask, render_template, request, jsonify
+import azure.cognitiveservices.speech as speechsdk
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'  # Change this to a strong key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # Use PostgreSQL or MySQL for production
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
 
-# User model
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=False)
+# Replace these with your actual Azure Speech credentials
+AZURE_SPEECH_KEY = 'CcBGjao6ZunMSdz4fMmw5myOmlU0ACaGlXFkx5fKtEK3Xy2AS6sfJQQJ99BCACHYHv6XJ3w3AAAAACOGtXIK'
+AZURE_REGION = 'eastus'
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+# Initialize Azure Speech Config
+speech_config = speechsdk.SpeechConfig(subscription=AZURE_SPEECH_KEY, region=AZURE_REGION)
+
+# Function to transcribe speech to text
+def transcribe_audio_to_text(audio_stream):
+    audio_config = speechsdk.audio.AudioConfig(stream=audio_stream)
+    recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+
+    result = recognizer.recognize_once()
+    return result.text
+
+# Function to synthesize speech from text
+def synthesize_speech_from_text(text):
+    audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
+    synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+
+    synthesizer.speak_text_async(text)
 
 @app.route('/')
 def home():
-    return redirect(url_for('login'))  # Redirect to the login page
+    return render_template('index.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        user = User.query.filter_by(email=email).first()
-        if user and bcrypt.check_password_hash(user.password, password):
-            login_user(user)
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Invalid email or password', 'danger')
-    return render_template('login.html')
+@app.route('/process_audio', methods=['POST'])
+def process_audio():
+    if 'audio' not in request.files:
+        return jsonify({'error': 'No audio file uploaded'}), 400
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = bcrypt.generate_password_hash(request.form['password']).decode('utf-8')
-        user = User(email=email, password=password)
-        db.session.add(user)
-        db.session.commit()
-        flash('Account created! You can now log in.', 'success')
-        return redirect(url_for('login'))
-    return render_template('register.html')
+    audio_file = request.files['audio']
+    audio_stream = speechsdk.audio.AudioDataStream(audio_file.read())
 
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    return f"Welcome {current_user.email}! <a href='/logout'>Logout</a>"
+    try:
+        # Transcribe audio to text
+        transcription = transcribe_audio_to_text(audio_stream)
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
+        # Process the transcription (this is where you can add logic or call an assistant)
+        response_text = f"You said: {transcription}. How can I assist you?"
 
-# Ensure the app context is used for creating the database
+        # Respond back with synthesized speech
+        synthesize_speech_from_text(response_text)
+
+        return jsonify({'transcription': transcription, 'response': response_text})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # This creates the tables in the database
     app.run(debug=True)

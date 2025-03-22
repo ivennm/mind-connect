@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Speech Assistant</title>
+</head>
+<body>
+    <h1>Talk to Your Assistant</h1>
+    <button id="startBtn">Start Talking</button>
+    <p id="transcription">Transcription: </p>
+    <p id="assistant-response">Assistant Response: </p>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const transcriptionDisplay = document.getElementById('transcription');
+        const responseDisplay = document.getElementById('assistant-response');
+
+        // Web Speech API: Speech Recognition
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;  // Keep the recognition session going
+        recognition.interimResults = true;  // Get real-time updates
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+            startBtn.textContent = 'Listening...';
+        };
+
+        recognition.onend = () => {
+            startBtn.textContent = 'Start Talking';
+        };
+
+        recognition.onresult = (event) => {
+            let transcription = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcription += event.results[i][0].transcript;
+            }
+
+            transcriptionDisplay.textContent = `Transcription: ${transcription}`;
+
+            // Send audio transcription to backend for processing
+            fetch('/process_audio', {
+                method: 'POST',
+                body: JSON.stringify({ audio: transcription }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                responseDisplay.textContent = `Assistant Response: ${data.response}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+
+        startBtn.onclick = () => {
+            recognition.start();
+        };
+    </script>
+</body>
+</html>
