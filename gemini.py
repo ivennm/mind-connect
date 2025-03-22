@@ -1,8 +1,8 @@
 from google import genai
 from google.genai import types
 
-# Here change the API key to your if you want (this is Jhon's)
-client = genai.Client(api_key="AIzaSyAPgVO7V4wwB5C7iwb7y50R_Sn-dGkDnds")
+# Here change the API key to yours
+client = genai.Client(api_key="API_KEY")
 
 # response is going to be made into text which then is 
 # made into speech
