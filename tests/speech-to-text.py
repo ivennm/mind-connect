@@ -2,12 +2,7 @@ import speech_recognition as sr
 import pyttsx3
 
 def record_text():
-    # Initialize recognizer
     recognizer = sr.Recognizer()
-    
-    # Clear the file contents at the start of the program
-    with open('speech_output.txt', 'w') as file:
-        file.write('')
     
     # Recording the audio
     with sr.Microphone() as source:
