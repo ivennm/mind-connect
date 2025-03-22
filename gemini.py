@@ -3,7 +3,7 @@ from google.genai import types
 import os
 
 # Set up the API client
-client = genai.Client(api_key="AIzaSyAPgVO7V4wwB5C7iwb7y50R_Sn-dGkDnds")
+client = genai.Client(api_key="API-KEY")
 
 # Load previous conversation history (if exists)
 history_file = "history.txt"
