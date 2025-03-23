@@ -15,12 +15,15 @@ document.getElementById("sendMessage").addEventListener("click", async () => {
     }
 });
 
-// Handle Enter Key for Sending Message
 document.getElementById("userInput").addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
-        let userInput = document.getElementById("userInput").value.trim();
+        e.preventDefault(); // Prevent form submission or new lines
+        let userInputField = document.getElementById("userInput");
+        let userInput = userInputField.value.trim();
+        
         if (userInput !== "") {
             await sendMessage(userInput);
+            userInputField.value = ""; // Clear input field after sending
         }
     }
 });

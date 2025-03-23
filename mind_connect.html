@@ -123,7 +123,16 @@
             chatContent.scrollTop = chatContent.scrollHeight; // Scroll to bottom
         }
     }
-
+    // Function to check for Enter key
+    function checkEnter(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Prevent default action (new line or form submission)
+            sendMessage();
+        }
+    }
+    // Add event listener for Enter key
+    document.getElementById("userInput").addEventListener("keydown", checkEnter);
+    
     // Handle Voice Recognition for Microphone
     document.getElementById("startVoiceBtn").addEventListener("click", function () {
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
