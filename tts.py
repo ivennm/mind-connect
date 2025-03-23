@@ -5,14 +5,14 @@ import time
 engine = pyttsx3.init()
 # Set speech rate (slower)
 rate = engine.getProperty('rate')
-engine.setProperty('rate', rate - 40)  # Decrease rate to make it slower
+engine.setProperty('rate', rate - 50)  # Decrease rate to make it slower
 
 # Set volume (optional, default is 1.0)
 engine.setProperty('volume', 1)  # Adjust volume between 0.0 and 1.0 (1.0 is max)
 
 # Set voice (optional)
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[2].id)  
+engine.setProperty('voice', voices[7].id)  
 
 def speak():
     # Convert text to speech
