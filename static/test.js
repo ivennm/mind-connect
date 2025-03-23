@@ -1,4 +1,6 @@
-  function myFunction() {
-    var x = document.getElementById("send-button");
-    x.alert('Button clicked!');
-  }
+function onButtonClick() {
+  alert('Button clicked!');
+}
+
+const button = document.querySelector('button');
+button.addEventListener('click', onButtonClick);

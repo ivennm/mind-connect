@@ -10,17 +10,21 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    my_variable = generate_response('test')
+    return render_template('index.html', variable=my_variable)
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_input = request.json.get('user_input')
+    user_input = request.json.get('user_input')  # Get JSON data from the client
+
     if not user_input:
         return jsonify(error="No input provided"), 400
-    
-    # Get response from Gemini
-    response = generate_response(user_input)
-    return jsonify(response=response)
+
+#Generate response from the backend logic
+    my_variable = generate_response(user_input)
+
+#Return the new response as JSON
+    return jsonify(response=my_variable)
 
 if __name__ == '__main__':
     app.run(debug=True)

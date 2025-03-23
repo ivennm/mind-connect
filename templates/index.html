@@ -5,27 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mental Health Chatbot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
 </head>
 <body>
-
     <div class="chat-container">
         <h1>Mental Health Chatbot</h1>
         <div id="chat-box">
             <!-- Chat messages will appear here -->
+            <p id="GFG"></p>
         </div>
         <div class="input-container">
             <input type="text" id="user-input" placeholder="Type your message...">
-            <button id="send-button">Send</button>
-            <script src="static/test.js"></script>
-        </div>
+            <button id="send-button" onclick="myFunction()">Send</button>
 
-        <div class="output-container">
-            <input type="text" id="gemini" placeholder=" ">
+            <p> {{ variable }}</p>
         </div>
     </div>
-
-    
-
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

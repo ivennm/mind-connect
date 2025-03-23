@@ -12,7 +12,7 @@ engine.setProperty('volume', 1)  # Adjust volume between 0.0 and 1.0 (1.0 is max
 
 # Set voice (optional)
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[7].id)  
+engine.setProperty('voice', voices[2].id)  
 
 def speak():
     # Convert text to speech
