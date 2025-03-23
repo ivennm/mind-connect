@@ -6,7 +6,7 @@ body {
         #d65cad 60%, /* Soft Pink */
         #ff9f00 90%, /* Softer Orange */
         #ffe680); /* Light Yellow */
-    position: absolute;
+    position: relative;
     margin: 0;
     padding: 0;
     text-align: center;
@@ -16,7 +16,6 @@ body {
     background-attachment: fixed; /* Keeps the background fixed while scrolling */
     background-position: top center; /* Keeps the gradient fixed at the top */
     background-size: cover; /* Ensure it covers the full viewport height */
-    position: relative;
     scroll-behavior: smooth;
     overflow-x: hidden; /* Prevent horizontal scroll */
 }
@@ -122,15 +121,6 @@ button:hover {
     margin: 0;
 }
 
-/* Close Button (X) */
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: purple;
-    cursor: pointer;
-    font-weight: bold;
-}
 
 /* Chat Content (Message Area) */
 .chat-content {
@@ -142,6 +132,12 @@ button:hover {
     color: #4b006e; /* AI text color */
 }
 
+.chat-input {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
 #userInput {
     width: calc(100% - 20px);
     padding: 8px;
@@ -151,23 +147,41 @@ button:hover {
     color: #4b006e; /* User input text color */
 }
 
-/* Send Button */
+.icon-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.icon-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 20px; /* Increase the size if needed */
+    color: #333; /* Set color to make it visible */
+}
+
+.icon-btn i {
+    font-size: 24px; /* Adjust size of the icon */
+}
+
+.icon-btn:hover {
+    color: #007bff; /* Add a hover effect for better user interaction */
+}
+
 .send-btn {
-    width: 100%;
-    padding: 8px;
-    background-color: #ff9f00;
+    background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 5px;
+    padding: 10px 15px;
     cursor: pointer;
 }
 
-
-.chat-button:hover, .play-button:hover {
-    background-color: #d65cad; /* Hover background color */
+.send-btn:hover {
+    background-color: #0056b3;
 }
-
-
 /* Hero Section */
 .hero {
     height: 80vh;
@@ -308,4 +322,3 @@ button:hover {
     background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
     z-index: 1; /* Ensures the gradient stays above other content */
 }
-
