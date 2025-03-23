@@ -147,11 +147,18 @@ button:hover {
     color: #4b006e; /* User input text color */
 }
 
+#startCameraBtn {
+    position: relative;
+    z-index: 1000; /* Make sure the button is on top of other elements */
+    margin: 10px; /* Adjust margin for spacing */
+}
+
 .icon-buttons {
     display: flex;
     gap: 10px;
     justify-content: center;
     margin-top: 10px;
+    color: #333; /* Set color to make it visible */
 }
 
 .icon-btn {
@@ -182,6 +189,8 @@ button:hover {
 .send-btn:hover {
     background-color: #0056b3;
 }
+
+
 /* Hero Section */
 .hero {
     height: 80vh;
