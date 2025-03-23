@@ -1,3 +1,7 @@
+import base64
+import cv2
+import numpy as np
+from deepface import DeepFace
 from flask import Flask, render_template, request, jsonify
 from gemini_backend import generate_response
 from dotenv import load_dotenv
@@ -10,34 +14,41 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    my_variable = generate_response('test')
-    return render_template('index.html', variable=my_variable)
+    return render_template('index.html')
 
-@app.route('/chat', methods=['POST'])
+@app.route('/chat', methods=['GET', 'POST'])
 def chat():
-<<<<<<< HEAD
-    user_input = request.json.get('user_input')  # Get JSON data from the client
 
-    if not user_input:
-        return jsonify(error="No input provided"), 400
+    if request.method == 'POST':
+        user_input = request.form.get('user_input')
+        if not user_input:
+            return render_template('chat.html', error="No input provided")
 
-#Generate response from the backend logic
-    my_variable = generate_response(user_input)
+        # Assuming generate_response is a function that generates a response based on user input
+        my_variable = generate_response(user_input)
+        return render_template('chat.html', variable=my_variable)
 
-#Return the new response as JSON
-    return jsonify(response=my_variable)
-=======
+    return render_template('chat.html')  # Handles GET requests and initial page load
+
+# Route to handle emotion detection from the frontend
+@app.route('/detect_emotion', methods=['POST'])
+def detect_emotion():
     data = request.get_json()
-    message = data['message']
+    image_data = data['image_data'].split(',')[1]  # Remove the 'data:image/png;base64,' part
     
-    if not message:
-        return jsonify(error="No message provided"), 400
-
-    # Get response from Gemini (replace this with your actual AI logic)
-    response = generate_response(message)
+    # Decode the base64 image data
+    img_data = base64.b64decode(image_data)
+    np_arr = np.frombuffer(img_data, np.uint8)
+    frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
     
-    return jsonify(response=response)
->>>>>>> 11f73a11019101bb5f06617158b534a4621a8bfa
+    # Analyze the emotion using DeepFace
+    try:
+        analyze = DeepFace.analyze(frame, actions=['emotion'], silent=True)
+        dominant_emotion = analyze[0]['dominant_emotion']
+        print(dominant_emotion)
+        return render_template('chat.html', emotion=dominant_emotion)  # Handles GET requests and initial page load
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)
