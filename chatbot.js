@@ -121,28 +121,60 @@ document.getElementById("startVoiceBtn").addEventListener("click", function () {
     recognition.start();
 });
 
-// Handle Camera Functionality
+// Handle Camera Popup Functionality
 document.getElementById("startCameraBtn").addEventListener("click", function () {
+    // Create the popup container
+    let cameraPopup = document.createElement("div");
+    cameraPopup.id = "cameraPopup";
+    cameraPopup.style.position = "fixed";
+    cameraPopup.style.top = "50%";
+    cameraPopup.style.left = "50%";
+    cameraPopup.style.transform = "translate(-50%, -50%)";
+    cameraPopup.style.background = "rgba(0, 0, 0, 0.9)";
+    cameraPopup.style.padding = "20px";
+    cameraPopup.style.borderRadius = "10px";
+    cameraPopup.style.zIndex = "1000";
+    cameraPopup.style.display = "flex";
+    cameraPopup.style.flexDirection = "column";
+    cameraPopup.style.alignItems = "center";
+    
+    // Create video element
+    let videoElement = document.createElement("video");
+    videoElement.id = "cameraFeed";
+    videoElement.autoplay = true;
+    videoElement.style.width = "300px";
+    videoElement.style.borderRadius = "10px";
+    
+    // Create a close button
+    let closeButton = document.createElement("button");
+    closeButton.innerText = "Close Camera";
+    closeButton.style.marginTop = "10px";
+    closeButton.style.padding = "8px";
+    closeButton.style.border = "none";
+    closeButton.style.background = "#ff4d4d";
+    closeButton.style.color = "#fff";
+    closeButton.style.cursor = "pointer";
+    closeButton.style.borderRadius = "5px";
+
+    // Close button functionality
+    closeButton.addEventListener("click", function () {
+        stream.getTracks().forEach(track => track.stop()); // Stop camera
+        cameraPopup.remove(); // Remove popup
+    });
+
+    // Append elements
+    cameraPopup.appendChild(videoElement);
+    cameraPopup.appendChild(closeButton);
+    document.body.appendChild(cameraPopup);
+
     // Access the camera
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(function (stream) {
-            // Attach the video stream to a video element
-            const videoElement = document.createElement('video');
             videoElement.srcObject = stream;
-            videoElement.play();
-            document.body.appendChild(videoElement);
-
-            // Optionally, add a stop button to stop the video stream
-            const stopButton = document.createElement('button');
-            stopButton.innerHTML = "Stop Camera";
-            stopButton.addEventListener('click', function () {
-                stream.getTracks().forEach(track => track.stop()); // Stop the camera stream
-                videoElement.remove(); // Remove the video element
-                stopButton.remove(); // Remove the stop button
-            });
-            document.body.appendChild(stopButton);
         })
         .catch(function (error) {
             console.error("Error accessing camera: ", error);
+            cameraPopup.remove(); // Remove popup if error
         });
 });
+

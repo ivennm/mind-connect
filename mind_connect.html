@@ -68,116 +68,144 @@
     <button id="chatButton" class="chat-button" onclick="openChat()">Chat with our Bot</button>
 
     <!-- Chatbot Popup -->
-<div id="chatPopup" class="chat-popup">
-    <div class="chat-header">
-        <h3>AI Chatbot</h3>
-        <button id="closeChat" class="close-btn" onclick="closeChat()">X</button>
-    </div>
-    <div id="chatContent" class="chat-content">
-        <!-- Chat messages will appear here -->
-    </div>
-    <div class="chat-input">
-        <input type="text" id="userInput" placeholder="Type your message..." onkeydown="checkEnter(event)">
-        <div class="icon-buttons">
-            <button class="icon-btn" id="startVoiceBtn">
-                <i class="fa fa-microphone"></i> <!-- Microphone Icon -->
-            </button>
-            <button id="startCameraBtn" class="icon-btn">
-                <i class="fas fa-camera"></i> <!-- FontAwesome camera icon -->
-              </button>
-            <button class="icon-btn" id="startCameraBtn" title="Start Camera">
-                <i class="fa fa-video-camera"></i> <!-- Camera Icon -->
-            </button>
+    <div id="chatPopup" class="chat-popup">
+        <div class="chat-header">
+            <h3>AI Chatbot</h3>
+            <button id="closeChat" class="close-btn" onclick="closeChat()">X</button>
         </div>
+        <div id="chatContent" class="chat-content">
+            <!-- Chat messages will appear here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message..." onkeydown="checkEnter(event)">
+            <div class="icon-buttons">
+                <button class="icon-btn" id="startVoiceBtn">
+                    <i class="fa fa-microphone"></i> <!-- Microphone Icon -->
+                </button>
+                <button id="startCameraBtn" class="icon-btn">
+                    <i class="fas fa-camera"></i> <!-- FontAwesome camera icon -->
+                </button>
+                <button class="icon-btn" id="startCameraBtn" title="Start Camera">
+                    <i class="fa fa-video-camera"></i> <!-- Camera Icon -->
+                </button>
+            </div>
+        </div>
+        <button class="send-btn" onclick="sendMessage()">Send</button>
     </div>
-    <button class="send-btn" onclick="sendMessage()">Send</button>
-</div>
 
-<script>
-    // Open chat popup
-    function openChat() {
-        document.getElementById('chatPopup').style.display = 'block';
-        document.getElementById('chatButton').style.display = 'none'; // Hide the button when popup is open
-    }
-
-    // Close chat popup
-    function closeChat() {
-        document.getElementById('chatPopup').style.display = 'none';
-        document.getElementById('chatButton').style.display = 'block'; // Show the button when popup is closed
-    }
-
-    // Send message function
-    function sendMessage() {
-        const message = document.getElementById('userInput').value;
-        if (message.trim() !== '') {
-            const chatContent = document.getElementById('chatContent');
-            const userMessage = document.createElement('div');
-            userMessage.textContent = message;
-            chatContent.appendChild(userMessage);
-            document.getElementById('userInput').value = '';
-
-            // Simulate AI response
-            const aiMessage = document.createElement('div');
-            aiMessage.textContent = "AI: I'm here to listen. How can I assist you?";
-            chatContent.appendChild(aiMessage);
-            chatContent.scrollTop = chatContent.scrollHeight; // Scroll to bottom
+    <script>
+        function openChat() {
+            document.getElementById('chatPopup').style.display = 'block';
+            document.getElementById('chatButton').style.display = 'none';
         }
-    }
-    // Function to check for Enter key
-    function checkEnter(event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Prevent default action (new line or form submission)
-            sendMessage();
+
+        function closeChat() {
+            document.getElementById('chatPopup').style.display = 'none';
+            document.getElementById('chatButton').style.display = 'block';
         }
-    }
-    // Add event listener for Enter key
-    document.getElementById("userInput").addEventListener("keydown", checkEnter);
-    
-    // Handle Voice Recognition for Microphone
-    document.getElementById("startVoiceBtn").addEventListener("click", function () {
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'en-US'; // Set language for recognition
 
-        recognition.onstart = function () {
-            console.log("Voice recognition started.");
-        };
+        function sendMessage() {
+            const message = document.getElementById('userInput').value;
+            if (message.trim() !== '') {
+                const chatContent = document.getElementById('chatContent');
+                const userMessage = document.createElement('div');
+                userMessage.textContent = message;
+                chatContent.appendChild(userMessage);
+                document.getElementById('userInput').value = '';
 
-        recognition.onresult = function (event) {
-            const speechResult = event.results[0][0].transcript; // Get the result from speech
-            console.log("Recognized Speech: ", speechResult);
-            document.getElementById("userInput").value = speechResult; // Set result to input field
-        };
+                const aiMessage = document.createElement('div');
+                aiMessage.textContent = "AI: I'm here to listen. How can I assist you?";
+                chatContent.appendChild(aiMessage);
+                chatContent.scrollTop = chatContent.scrollHeight;
+            }
+        }
 
-        recognition.onerror = function (event) {
-            console.error("Error with voice recognition: ", event.error);
-        };
+        function checkEnter(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+        document.getElementById("userInput").addEventListener("keydown", checkEnter);
 
-        recognition.start();
+        document.getElementById("startVoiceBtn").addEventListener("click", function () {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+
+            recognition.onstart = function () {
+                console.log("Voice recognition started.");
+            };
+
+            recognition.onresult = function (event) {
+                const speechResult = event.results[0][0].transcript;
+                console.log("Recognized Speech: ", speechResult);
+                document.getElementById("userInput").value = speechResult;
+            };
+
+            recognition.onerror = function (event) {
+                console.error("Error with voice recognition: ", event.error);
+            };
+
+            recognition.start();
+        });
+
+        let cameraStream; // Store stream globally
+
+document.getElementById("startCameraBtn").addEventListener("click", function () {
+    // Create popup
+    let cameraPopup = document.createElement("div");
+    cameraPopup.id = "cameraPopup";
+    cameraPopup.style.position = "fixed";
+    cameraPopup.style.top = "50%";
+    cameraPopup.style.left = "50%";
+    cameraPopup.style.transform = "translate(-50%, -50%)";
+    cameraPopup.style.background = "rgba(0, 0, 0, 0.9)";
+    cameraPopup.style.padding = "20px";
+    cameraPopup.style.borderRadius = "10px";
+    cameraPopup.style.zIndex = "1000";
+    cameraPopup.style.display = "flex";
+    cameraPopup.style.flexDirection = "column";
+    cameraPopup.style.alignItems = "center";
+
+    let videoElement = document.createElement("video");
+    videoElement.id = "cameraFeed";
+    videoElement.autoplay = true;
+    videoElement.style.width = "300px";
+    videoElement.style.borderRadius = "10px";
+
+    let closeButton = document.createElement("button");
+    closeButton.innerText = "Close Camera";
+    closeButton.style.marginTop = "10px";
+    closeButton.style.padding = "8px";
+    closeButton.style.border = "none";
+    closeButton.style.background = "#ff4d4d";
+    closeButton.style.color = "#fff";
+    closeButton.style.cursor = "pointer";
+    closeButton.style.borderRadius = "5px";
+
+    closeButton.addEventListener("click", function () {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop()); // Stop the camera
+        }
+        cameraPopup.remove();
     });
 
-    // Handle Camera Functionality
-    document.getElementById("startCameraBtn").addEventListener("click", function () {
-        // Access the camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function (stream) {
-                // Attach the video stream to a video element
-                const videoElement = document.createElement('video');
-                document.body.appendChild(videoElement);
-                videoElement.srcObject = stream;
-                videoElement.play();
+    cameraPopup.appendChild(videoElement);
+    cameraPopup.appendChild(closeButton);
+    document.body.appendChild(cameraPopup);
 
-                // Optionally, add a stop button to stop the video stream
-                const stopButton = document.createElement('button');
-                stopButton.innerHTML = "Stop Camera";
-                stopButton.addEventListener('click', function () {
-                    stream.getTracks().forEach(track => track.stop()); // Stop the camera stream
-                    videoElement.remove(); // Remove the video element
-                    stopButton.remove(); // Remove the stop button
-                });
-                document.body.appendChild(stopButton);
-            })
-            .catch(function (error) {
-                console.error("Error accessing camera: ", error);
-            });
-    });
-</script>
+    // Access the camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+            cameraStream = stream; // Store globally
+            videoElement.srcObject = stream;
+        })
+        .catch(function (error) {
+            console.error("Error accessing camera: ", error);
+            cameraPopup.remove();
+        });
+});
+
+    </script>
+</body>
+</html>
