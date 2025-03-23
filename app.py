@@ -15,6 +15,7 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
+<<<<<<< HEAD
     user_input = request.json.get('user_input')  # Get JSON data from the client
 
     if not user_input:
@@ -25,6 +26,18 @@ def chat():
 
 #Return the new response as JSON
     return jsonify(response=my_variable)
+=======
+    data = request.get_json()
+    message = data['message']
+    
+    if not message:
+        return jsonify(error="No message provided"), 400
+
+    # Get response from Gemini (replace this with your actual AI logic)
+    response = generate_response(message)
+    
+    return jsonify(response=response)
+>>>>>>> 11f73a11019101bb5f06617158b534a4621a8bfa
 
 if __name__ == '__main__':
     app.run(debug=True)
